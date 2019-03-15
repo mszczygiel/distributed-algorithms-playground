@@ -5,6 +5,8 @@ module Net.Net
   , BidiChannel
   , OutboundChannel
   , InboundChannel
+  , Message
+  , content
   , connectUntilSuccess
   , localAddr
   , listen
@@ -32,7 +34,7 @@ import           Control.Monad.Except
 
 data Message = Message {
     _content :: ByteString
-} deriving (Show, Eq)
+} deriving (Show, Eq, Ord)
 
 data Server = Server {
     _serverSock :: S.Socket
@@ -67,9 +69,9 @@ newSocket = liftIO $ S.socket S.AF_INET S.Stream S.defaultProtocol
 newMessage :: ByteString -> Message
 newMessage = Message
 
-makeClassy ''Server
-makeClassy ''Message
-makeClassy ''BidiChannel
+L.makeClassy ''Server
+L.makeClassy ''Message
+L.makeClassy ''BidiChannel
 
 runPublisher :: (MonadIO m) => S.Socket -> OutboundChannel -> m ()
 runPublisher sock (OutboundChannel chan) = liftIO $ runLoop
